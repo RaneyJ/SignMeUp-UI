@@ -1,0 +1,31 @@
+<div id="login-component">
+
+    <div class="form-signin">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div id="username-container" class="form-floating">
+            <input type="text" class="form-control" id="login-form-username" placeholder="Username">
+            <label for="login-form-username">Username</label>
+        </div>
+
+        <div id="password-container" class="form-floating">
+            <input type="password" class="form-control" id="login-form-password" placeholder="Password">
+            <label for="login-form-password">Password</label>
+        </div>
+
+        <div id="remember-me-container" class="checkbox mb-3">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+
+        <button id="login-form-button" class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+
+    </div>
+
+    <div id="error-msg-container">
+        <p hidden id="error-msg" class="alert alert-danger"></p>
+    </div>
+
+</div>

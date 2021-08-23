@@ -1,0 +1,20 @@
+#login-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2.75rem;
+    padding-bottom: 2.75rem;
+}
+
+.form-signin {
+    padding: 1rem;
+    margin: auto;
+}
+
+#error-msg-container {
+    margin: auto;
+}
+
+div > input {
+    margin-bottom: .6rem;
+}
