@@ -48,7 +48,6 @@ function LoginComponent() {
             password: password
         };
 
-
         try{
 
             let response = await fetch(`${env.apiUrl}/auth`, {
