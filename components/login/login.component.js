@@ -59,6 +59,7 @@ function LoginComponent() {
         })
             .then(resp => {
                 status = resp.status;
+                state.jwt = resp.headers.get("Authorization");
                 return resp.json();
             })
             .then(payload => {
@@ -66,6 +67,8 @@ function LoginComponent() {
                     updateErrorMessage(payload.message);
                 } else {
                     state.authUser = payload;
+
+                    //console.log(state.jwt, state.authUser);
                     router.navigate('/dashboard');
                 }
             })

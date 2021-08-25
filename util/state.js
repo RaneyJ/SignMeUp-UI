@@ -1,5 +1,6 @@
 const state = {
-    authUser: null
+    authUser: null,
+    jwt: null
 }
 
 export default state;
