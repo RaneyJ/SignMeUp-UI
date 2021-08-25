@@ -34,7 +34,7 @@ function LoginComponent() {
         }
     }
 
-    function login() {
+    async function login() {
 
         if (!username || !password) {
             updateErrorMessage('You need to provide a username and a password!');
@@ -48,28 +48,28 @@ function LoginComponent() {
             password: password
         };
 
-        let status = 0;
 
-        fetch(`${env.apiUrl}/auth`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(credentials)
-        })
-            .then(resp => {
-                status = resp.status;
-                return resp.json();
+        try{
+
+            let response = await fetch(`${env.apiUrl}/auth`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(credentials)
             })
-            .then(payload => {
-                if (status === 401) {
-                    updateErrorMessage(payload.message);
-                } else {
-                    state.authUser = payload;
-                    router.navigate('/dashboard');
-                }
-            })
-            .catch(err => console.error(err));
+            let data = await response.json();
+            if(data.status === 401)
+                updateErrorMessage(data.message);
+            else{
+                state.authUser = data;
+                state.JWT = response.headers.get("Authorization");
+                router.navigate('/dashboard');
+            }
+
+        } catch(err){
+            console.error(err.message);
+        }
 
     }
 
