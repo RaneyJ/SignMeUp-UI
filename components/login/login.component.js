@@ -58,7 +58,7 @@ function LoginComponent() {
                 body: JSON.stringify(credentials)
             })
             let data = await response.json();
-            if(data.status === 401)
+            if(response.status === 401)
                 updateErrorMessage(data.message);
             else{
                 state.authUser = data;
@@ -77,8 +77,8 @@ function LoginComponent() {
         LoginComponent.prototype.injectTemplate(() => {
 
             usernameFieldElement = document.getElementById('login-form-username');
-            passwordFieldElement = document.getElementById('login-form-password');;
-            loginButtonElement = document.getElementById('login-form-button');;
+            passwordFieldElement = document.getElementById('login-form-password');
+            loginButtonElement = document.getElementById('login-form-button');
             errorMessageElement = document.getElementById('error-msg');
 
             usernameFieldElement.addEventListener('keyup', updateUsername);
