@@ -21,9 +21,14 @@ function DashboardComponent() {
         DashboardComponent.prototype.injectStylesheet();
         DashboardComponent.prototype.injectTemplate(() => {
 
-            welcomeUserElement = document.getElementById('welcome-user');
-            welcomeUserElement.innerText = currentUsername;
-
+            if(state.authUser.faculty){
+                welcomeUserElement = document.getElementById('Dashboard-title');
+                welcomeUserElement.innerText = "Faculty Dashboard";
+            } else {
+                welcomeUserElement = document.getElementById('Dashboard-title');
+                welcomeUserElement.innerText = "Student Dashboard";
+            }
+            
             window.history.pushState('dashboard', 'Dashboard', '/dashboard');
 
         });
