@@ -9,6 +9,7 @@ function DashboardComponent() {
     let welcomeUserElement;
     let tableBodyElement;
     let errorMessageElement;
+    let modalElement;
 
     this.render = function() {
 
@@ -27,6 +28,8 @@ function DashboardComponent() {
             welcomeUserElement = document.getElementById('Dashboard-title');
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');
+            modalElement = document.getElementById('exampleModal');
+            
 
 
             AppendUsersClasses(authUser.id);
@@ -82,13 +85,20 @@ function DashboardComponent() {
                     let professorCell = document.createElement('td');
                     let descriptionCell = document.createElement('td');
                     let capacityCell = document.createElement('td');
+                    let interactCell = document.createElement('td');
+
+                    interactCell.innerHTML = 
+                    `
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" onClick="modal()" data-bs-target="#exampleModal">
+                    Edit
+                    </button
+                    `
 
                     let bsSpan = document.createElement('span')
+
                     bsSpan.className = 'badge bg-info text-dark';
                     bsSpan.innerText = Object.keys(c.students).length+"/"+c.capacity;
-                    
 
-                    
                     
                     capacityCell.appendChild(bsSpan)
 
@@ -111,6 +121,7 @@ function DashboardComponent() {
                     row.appendChild(descriptionCell);
                     row.appendChild(professorCell);
                     row.appendChild(capacityCell);
+                    row.appendChild(interactCell);
                     var myModal = document.getElementById('exampleModal')
                     idCell.addEventListener('click',(e) => {
                         label = document.getElementById('exampleModalLabel');
@@ -143,6 +154,7 @@ function DashboardComponent() {
                     let descriptionCell = document.createElement('td');
                     let professorCell = document.createElement('td');
                     let capacityCell = document.createElement('td');
+                    let interactCell = document.createElement('td');
 
                     row.key = c.id
                     capacityCell.style.width = '5%';
@@ -162,6 +174,8 @@ function DashboardComponent() {
                     row.appendChild(professorCell);
                     row.appendChild(descriptionCell);
                     row.appendChild(capacityCell);
+                    row.appendChild(interactCell);
+
 
                     document.getElementById('class-table-body').appendChild(row);
 
@@ -176,6 +190,10 @@ function DashboardComponent() {
                     for(let p of professors)
                         professorCell.innerText += ("Dr. "+p.lastName + "\n");
                 }
+            }
+
+            function modal(){
+                console.log("MODAL CLICKED!");
             }
         
 

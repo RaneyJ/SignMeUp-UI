@@ -95,11 +95,7 @@ function DiscoverComponent() {
                 row.appendChild(professorCell);
                 row.appendChild(descriptionCell);
                 row.appendChild(capacityCell);
-                row.appendChild(enrollCell)
-                row.addEventListener('click',(e) => {
-                    console.log(e.target.parentNode);
-                    modalElement.show();
-                })
+                row.appendChild(enrollCell);
 
                 document.getElementById('class-table-body').appendChild(row);
 
