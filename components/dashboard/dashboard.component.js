@@ -80,18 +80,24 @@ function DashboardComponent() {
                 for(let c of data){
 
                     let row = document.createElement('tr');
-                    let idCell = document.createElement('td');
                     let titleCell = document.createElement('td');
                     let professorCell = document.createElement('td');
                     let descriptionCell = document.createElement('td');
                     let capacityCell = document.createElement('td');
                     let interactCell = document.createElement('td');
+                    let deleteCell = document.createElement('td');
 
                     interactCell.innerHTML = 
                     `
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button id="updatebtn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal">
                     Edit
-                    </button
+                    </button>
+                    `
+                    deleteCell.innerHTML = 
+                    `
+                    <button id="deletebtn" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    Delete
+                    </button>
                     `
 
 
@@ -105,32 +111,31 @@ function DashboardComponent() {
 
 
                     row.key = c.id
-                    capacityCell.style.width = '5%';
-
-                    // console.log(c.name.length+ "      w:"+c.name.length*100/70);
-                    // let w = c.name.length*100/70;
-
-
-                    // titleCell.style.width = `${w}%`
-        
-                    // console.log(titleCell.style.width);
-                    // console.log(row.key);
+                    capacityCell.style.width = '5%';   
         
                     // Append cells to the row
-                    row.appendChild(idCell);
                     row.appendChild(titleCell);
                     row.appendChild(descriptionCell);
                     row.appendChild(professorCell);
                     row.appendChild(capacityCell);
                     row.appendChild(interactCell);
+                    row.appendChild(deleteCell);
                     
 
                     document.getElementById('class-table-body').appendChild(row);
 
-                    row.getElementsByTagName('button')[0].addEventListener('click', setModal);
+                    let buttons = row.getElementsByTagName('button');
+                    buttons[0].addEventListener('click', setModal);
+                    buttons[1].addEventListener('click', setDelModal);
+                    
+                    let id = c.id;
 
+                    if(!myMap)
+                        var myMap = new Map();
+                   
+                    myMap.set( id , [c.openWindow, c.closeWindow]);
+                    
 
-                    idCell.innerText = c.id;
                     titleCell.innerText = c.name;
                     descriptionCell.innerText = c.description;
                     //capacityCell.innerText = Object.keys(c.students).length+"/"+c.capacity;
@@ -147,7 +152,6 @@ function DashboardComponent() {
                 for(let c of data){
 
                     let row = document.createElement('tr');
-                    let idCell = document.createElement('td');
                     let titleCell = document.createElement('td');
                     let descriptionCell = document.createElement('td');
                     let professorCell = document.createElement('td');
@@ -157,17 +161,8 @@ function DashboardComponent() {
                     row.key = c.id
                     capacityCell.style.width = '5%';
 
-                    // console.log(c.name.length+ "      w:"+c.name.length*100/70);
-                    // let w = c.name.length*100/70;
-
-
-                    // titleCell.style.width = `${w}%`
-        
-                    // console.log(titleCell.style.width);
-                    // console.log(row.key);
         
                     // Append cells to the row
-                    row.appendChild(idCell);
                     row.appendChild(titleCell);
                     row.appendChild(professorCell);
                     row.appendChild(descriptionCell);
@@ -178,8 +173,6 @@ function DashboardComponent() {
                     document.getElementById('class-table-body').appendChild(row);
 
 
-                    
-                    idCell.innerText = c.id;
                     titleCell.innerText = c.name;
                     descriptionCell.innerText = c.description;
                     capacityCell.innerText = Object.keys(c.students).length+"/"+c.capacity;
@@ -190,19 +183,41 @@ function DashboardComponent() {
                 }
             }        
 
+            //for(const p in dateList) {
+            console.log (myMap.get('-1871949484'));
+            
+            
+            
         }
 
-        function setModal(){
-            console.log("MODAL CLICKED!");
+        function setModal(e){
+
             let row = e.target.parentNode.parentNode;
-            console.log(row);
+
             let elements = row.getElementsByTagName('td');
-            document.getElementById('exampleModalLabel').innerText = `${elements[1].innerText} | ${elements[3].innerText}`;
-            document.getElementById('exampleModalBody').innerText = `${elements[2].innerText}`;
-            let confirm = document.getElementById('exampleModalConfirm');
+            document.getElementById('updateModalLabel').innerText = `${elements[0].innerText} | ${elements[2].innerText}`;
+            document.getElementById('updateModalBody').innerText = `${elements[1].innerText}`;
+            document.getElementById('')
+
+            let confirm = document.getElementById('updateModalConfirm');
 
             modal_id = row.key;
+
             confirm.addEventListener('click', updateModal);
+        }
+
+        function setDelModal(e){
+            let row = e.target.parentNode.parentNode;
+
+            let elements = row.getElementsByTagName('td');
+            document.getElementById('deleteModalLabel').innerText = `${elements[0].innerText} | ${elements[2].innerText}`;
+            document.getElementById('deleteModalBody').innerText = `${elements[1].innerText}`;
+
+            let confirm = document.getElementById('deleteModalConfirm');
+
+            modal_id = row.key;
+
+            confirm.addEventListener('click', deleteModal);
         }
 
         var modal_id = undefined;
@@ -210,7 +225,7 @@ function DashboardComponent() {
             console.log(modal_id);
         }
         function deleteModal(){
-            
+            console.log(modal_id);
         }
 
     }

@@ -4,11 +4,11 @@
 
     <table class="table" id="class-table">
         <thead>
-        <th>ID</th>
         <th>Title</th>
         <th>Description</th>
         <th id="profCell">Professor</th>
         <th>Capacity</th>
+        <th></th>
         <th></th>
         </thead>
         <tbody id="class-table-body">
@@ -20,28 +20,59 @@
     <br/>
     <hr/>
 
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
-      </button>
       
-      <!-- Modal -->
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <!-- Update Modal -->
+      <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 class="modal-title" id="updateModalLabel">Modal title</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              ...
+            <div class="modal-body" id="updateModalBody">
+                  <div class="form-group">
+                    <label for="titleInput">Class Name</label>
+                    <input type="text" class="form-control" id="titleInput" placeholder="Enter title">
+                  </div>
+                  <div class="form-group">
+                    <label for="descriptionInput">Description</label>
+                    <input type="text" class="form-control" id="descriptionInput" placeholder="Enter description">
+                  </div>
+                  <div class="form-group">
+                    <label for="capacityInput">Capacity</label>
+                    <input type="number" class="form-control" id="capacityInput" placeholder="Enter capacity">
+                  </div>
+                  <div class="form-group">
+                    <label for="deadlineInput">Deadline</label>
+                    <input type="date" class="form-control" id="deadlineInput" placeholder="Enter deadline">
+                  </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Update</button>
+              <button type="button" class="btn btn-primary" id="updateModalConfirm">Confirm</button>
             </div>
           </div>
         </div>
       </div>
+
+        <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="deleteModalBody">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="deleteModalConfirm">Confirm</button>
+            </div>
+        </div>
+        </div>
+    </div>
 
     <div id="error-msg-container">
         <p hidden id="error-msg" class="alert alert-danger"></p>
