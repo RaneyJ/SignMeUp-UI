@@ -15,9 +15,11 @@
         </tbody>
     </table>
 
-    <br/><hr/><br/>
-    <button class="btn btn-primary" id="add-student">Do a Thing</button>
-    <br/>
+    <div id="show-all-container" class="checkbox mb-3">
+        <label>
+            <input type="checkbox" value="show-all"> Show All
+        </label>
+    </div>
     
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -31,7 +33,7 @@
             ...
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" id=cancelModalButton class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" id="exampleModalConfirm">Confirm</button>
             </div>
         </div>

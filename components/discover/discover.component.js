@@ -10,7 +10,29 @@ function DiscoverComponent() {
     let tableBodyElement;
     let errorMessageElement;
     let modalElement;
-    let confirmElementTemplate;
+    let cancelModalElement;
+    let showCheckboxElement;
+
+    let showAll = false;
+
+    function updateShowAll(e) {
+        showAll = e.target.checked;
+
+        if(showAll == true) {
+            renderTableAll();
+        } else {
+            renderTableUnenrolled();
+        }
+    }
+
+    function renderTableAll() {
+        console.log("SHOW ALL");
+    }
+
+    function renderTableUnenrolled() {
+        console.log("SHOW SOME");
+    }
+
 
     this.render = function() {
 
@@ -33,6 +55,10 @@ function DiscoverComponent() {
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');
             modalElement = document.getElementById('exampleModal');
+            cancelModalElement = document.getElementById('cancelModalButton');
+            showCheckboxElement = document.getElementById('show-all-container');
+
+            showCheckboxElement.addEventListener('change', updateShowAll);
 
             AppendUsersClasses();
 
@@ -135,8 +161,28 @@ function DiscoverComponent() {
     }
 
     var modal_id = undefined;
-    function enroll() {
+    async function enroll() {
         console.log(modal_id);
+
+        try{
+
+            let response = await fetch(`${env.apiUrl}/enrollment/?user_id=${state.authUser.id}&class_id=${modal_id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': state.JWT
+                }
+            })
+            if(response.status != 201)
+                updateErrorMessage(data.message);
+            else{
+                cancelModalElement.click();
+                router.navigate('/dashboard');
+            }
+
+        } catch(err){
+            console.error(err);
+        }
     }
     
     function updateErrorMessage(errorMessage) {

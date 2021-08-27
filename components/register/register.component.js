@@ -49,9 +49,6 @@ function RegisterComponent() {
     }
 
     function updateIsFaculty(e) {
-        //Fix this
-        console.log(e);
-        console.log(e.target);
         isfaculty = e.target.checked;
     }
 
