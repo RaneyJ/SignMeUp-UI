@@ -9,6 +9,7 @@ function DiscoverComponent() {
     let welcomeUserElement;
     let tableBodyElement;
     let errorMessageElement;
+    let modalElement;
 
     this.render = function() {
 
@@ -30,6 +31,7 @@ function DiscoverComponent() {
             welcomeUserElement = document.getElementById('Discover-title');
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');
+            modalElement = document.getElementById('exampleModal');
 
 
             AppendUsersClasses();
@@ -67,30 +69,37 @@ function DiscoverComponent() {
             for(let c of data){
 
                 let row = document.createElement('tr');
+                row.setAttribute('data-toggle', "modal");
+                row.setAttribute('data-target', '#exampleModal');
+
+
                 let idCell = document.createElement('td');
                 let titleCell = document.createElement('td');
                 let descriptionCell = document.createElement('td');
                 let professorCell = document.createElement('td');
                 let capacityCell = document.createElement('td');
+                let enrollCell = document.createElement('td');
+
+                enrollCell.innerHTML = 
+                `
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Enroll
+                </button>
+                `
 
                 row.key = c.id
                 capacityCell.style.width = '5%';
 
-                    // console.log(c.name.length+ "      w:"+c.name.length*100/70);
-                    // let w = c.name.length*100/70;
-
-
-                    // titleCell.style.width = `${w}%`
-        
-                    // console.log(titleCell.style.width);
-                    // console.log(row.key);
-        
-                    // Append cells to the row
                 row.appendChild(idCell);
                 row.appendChild(titleCell);
                 row.appendChild(professorCell);
                 row.appendChild(descriptionCell);
                 row.appendChild(capacityCell);
+                row.appendChild(enrollCell)
+                row.addEventListener('click',(e) => {
+                    console.log(e.target.parentNode);
+                    modalElement.show();
+                })
 
                 document.getElementById('class-table-body').appendChild(row);
 
