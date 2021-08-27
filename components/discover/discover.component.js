@@ -10,6 +10,7 @@ function DiscoverComponent() {
     let tableBodyElement;
     let errorMessageElement;
     let modalElement;
+    let confirmElementTemplate;
 
     this.render = function() {
 
@@ -32,7 +33,6 @@ function DiscoverComponent() {
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');
             modalElement = document.getElementById('exampleModal');
-
 
             AppendUsersClasses();
 
@@ -128,11 +128,15 @@ function DiscoverComponent() {
         document.getElementById('exampleModalLabel').innerText = `${elements[1].innerText} | ${elements[3].innerText}`;
         document.getElementById('exampleModalBody').innerText = `${elements[2].innerText}`;
         let confirm = document.getElementById('exampleModalConfirm');
-        confirm.addEventListener('click', enroll(elements[0].innerText));
+        
+        
+        modal_id = elements[0].innerText;
+        confirm.addEventListener('click', enroll);
     }
 
-    function enrolling(id) {
-
+    var modal_id = undefined;
+    function enroll() {
+        console.log(modal_id);
     }
     
     function updateErrorMessage(errorMessage) {
