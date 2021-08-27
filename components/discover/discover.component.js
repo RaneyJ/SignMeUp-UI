@@ -80,29 +80,30 @@ function DiscoverComponent() {
                 let capacityCell = document.createElement('td');
                 let enrollCell = document.createElement('td');
 
-                enrollCell.innerHTML = 
+                let button = 
                 `
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Enroll
                 </button>
                 `
+                enrollCell.innerHTML = button;
+
 
                 row.key = c.id
                 capacityCell.style.width = '5%';
 
                 row.appendChild(idCell);
                 row.appendChild(titleCell);
-                row.appendChild(professorCell);
                 row.appendChild(descriptionCell);
+                row.appendChild(professorCell);
                 row.appendChild(capacityCell);
                 row.appendChild(enrollCell)
-                row.addEventListener('click',(e) => {
-                    console.log(e.target.parentNode);
-                    modalElement.show();
-                })
 
-                document.getElementById('class-table-body').appendChild(row);
 
+                let table = document.getElementById('class-table-body');
+                table.appendChild(row);
+
+                row.getElementsByTagName('button')[0].addEventListener('click', setModal);
 
                     
                 idCell.innerText = c.id;
@@ -116,6 +117,21 @@ function DiscoverComponent() {
             }
         }
         
+
+    }
+
+    function setModal(e) {
+        console.log("SETTING MODAL");
+        let row = e.target.parentNode.parentNode
+        console.log(row);
+        let elements = row.getElementsByTagName('td');
+        document.getElementById('exampleModalLabel').innerText = `${elements[1].innerText} | ${elements[3].innerText}`;
+        document.getElementById('exampleModalBody').innerText = `${elements[2].innerText}`;
+        let confirm = document.getElementById('exampleModalConfirm');
+        confirm.addEventListener('click', enroll(elements[0].innerText));
+    }
+
+    function enrolling(id) {
 
     }
     
