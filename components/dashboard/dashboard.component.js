@@ -82,6 +82,12 @@ function DashboardComponent() {
                     let descriptionCell = document.createElement('td');
                     let capacityCell = document.createElement('td');
 
+                    let bsSpan = document.createElement('span')
+                    bsSpan.className = 'badge alert-warning';
+                    bsSpan.innerText = Object.keys(c.students).length+"/"+c.capacity;
+                    capacityCell.appendChild(bsSpan)
+                    //capacityCell.innerText = w.toString();
+
                     row.key = c.id
                     capacityCell.style.width = '5%';
 
@@ -100,6 +106,9 @@ function DashboardComponent() {
                     row.appendChild(descriptionCell);
                     row.appendChild(professorCell);
                     row.appendChild(capacityCell);
+                    row.addEventListener('click',(e) => {
+
+                    })
 
                     document.getElementById('class-table-body').appendChild(row);
 
@@ -108,7 +117,7 @@ function DashboardComponent() {
                     idCell.innerText = c.id;
                     titleCell.innerText = c.name;
                     descriptionCell.innerText = c.description;
-                    capacityCell.innerText = Object.keys(c.students).length+"/"+c.capacity;
+                    //capacityCell.innerText = Object.keys(c.students).length+"/"+c.capacity;
 
                     let professors = c.faculty;
                     for(let p of professors)
