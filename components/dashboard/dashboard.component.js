@@ -89,10 +89,11 @@ function DashboardComponent() {
 
                     interactCell.innerHTML = 
                     `
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" onClick="modal()" data-bs-target="#exampleModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     Edit
                     </button
                     `
+
 
                     let bsSpan = document.createElement('span')
 
@@ -122,16 +123,13 @@ function DashboardComponent() {
                     row.appendChild(professorCell);
                     row.appendChild(capacityCell);
                     row.appendChild(interactCell);
-                    var myModal = document.getElementById('exampleModal')
-                    idCell.addEventListener('click',(e) => {
-                        label = document.getElementById('exampleModalLabel');
-                        label.innerText = e.target.innerText;
-                    });
+                    
 
                     document.getElementById('class-table-body').appendChild(row);
 
+                    row.getElementsByTagName('button')[0].addEventListener('click', setModal);
 
-                    
+
                     idCell.innerText = c.id;
                     titleCell.innerText = c.name;
                     descriptionCell.innerText = c.description;
@@ -190,13 +188,29 @@ function DashboardComponent() {
                     for(let p of professors)
                         professorCell.innerText += ("Dr. "+p.lastName + "\n");
                 }
-            }
+            }        
 
-            function modal(){
-                console.log("MODAL CLICKED!");
-            }
-        
+        }
 
+        function setModal(){
+            console.log("MODAL CLICKED!");
+            let row = e.target.parentNode.parentNode;
+            console.log(row);
+            let elements = row.getElementsByTagName('td');
+            document.getElementById('exampleModalLabel').innerText = `${elements[1].innerText} | ${elements[3].innerText}`;
+            document.getElementById('exampleModalBody').innerText = `${elements[2].innerText}`;
+            let confirm = document.getElementById('exampleModalConfirm');
+
+            modal_id = row.key;
+            confirm.addEventListener('click', updateModal);
+        }
+
+        var modal_id = undefined;
+        function updateModal() {
+            console.log(modal_id);
+        }
+        function deleteModal(){
+            
         }
 
     }
