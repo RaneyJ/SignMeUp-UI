@@ -73,6 +73,7 @@ function DashboardComponent() {
                 //Render faculty classes
                 //currently teaching
             if(state.authUser.faculty){
+
                 for(let c of data){
 
                     let row = document.createElement('tr');
@@ -83,10 +84,14 @@ function DashboardComponent() {
                     let capacityCell = document.createElement('td');
 
                     let bsSpan = document.createElement('span')
-                    bsSpan.className = 'badge alert-warning';
+                    bsSpan.className = 'badge bg-info text-dark';
                     bsSpan.innerText = Object.keys(c.students).length+"/"+c.capacity;
+                    
+
+                    
+                    
                     capacityCell.appendChild(bsSpan)
-                    //capacityCell.innerText = w.toString();
+
 
                     row.key = c.id
                     capacityCell.style.width = '5%';
@@ -106,9 +111,11 @@ function DashboardComponent() {
                     row.appendChild(descriptionCell);
                     row.appendChild(professorCell);
                     row.appendChild(capacityCell);
-                    row.addEventListener('click',(e) => {
-
-                    })
+                    var myModal = document.getElementById('exampleModal')
+                    idCell.addEventListener('click',(e) => {
+                        label = document.getElementById('exampleModalLabel');
+                        label.innerText = e.target.innerText;
+                    });
 
                     document.getElementById('class-table-body').appendChild(row);
 
