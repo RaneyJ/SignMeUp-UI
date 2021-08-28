@@ -19,18 +19,14 @@ function DiscoverComponent() {
         showAll = e.target.checked;
 
         if(showAll == true) {
-            renderTableAll();
+            renderTable();
         } else {
-            renderTableUnenrolled();
+            renderTable();
         }
     }
 
-    function renderTableAll() {
-        console.log("SHOW ALL");
-    }
-
-    function renderTableUnenrolled() {
-        console.log("SHOW SOME");
+    function renderTable() {
+        AppendUsersClasses();
     }
 
 
@@ -72,7 +68,9 @@ function DiscoverComponent() {
 
     async function AppendUsersClasses(){
 
-        console.log('appending the classes')
+        //Clearing table
+        let table = document.getElementById('class-table-body');
+        table.innerHTML = '';
         
         let response = await fetch(`${env.apiUrl}/classes`, {
             method: 'GET',
@@ -93,6 +91,17 @@ function DiscoverComponent() {
                 //Should have: title of class, description, and headcount / capacity
                 
             for(let c of data){
+                let enrolled = false;
+                for(let stu of c.students) {
+                    if(stu.id === state.authUser.id) {
+                        enrolled = true;
+                        break;
+                    }
+                }
+
+                if(enrolled && !showAll) {
+                    break;
+                }
 
                 let row = document.createElement('tr');
                 row.setAttribute('data-toggle', "modal");
@@ -106,12 +115,22 @@ function DiscoverComponent() {
                 let capacityCell = document.createElement('td');
                 let enrollCell = document.createElement('td');
 
-                let button = 
-                `
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Enroll
-                </button>
-                `
+                let button = ''
+                if(!enrolled) {
+                    button = 
+                    `
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Enroll
+                    </button>
+                    `
+                } else {
+                    button =
+                    `
+                    <button type="button" class="btn btn-secondary" disabled>
+                    Enroll
+                    </button>
+                    `
+                }
                 enrollCell.innerHTML = button;
 
 
@@ -125,11 +144,12 @@ function DiscoverComponent() {
                 row.appendChild(capacityCell);
                 row.appendChild(enrollCell)
 
-
-                let table = document.getElementById('class-table-body');
                 table.appendChild(row);
 
-                row.getElementsByTagName('button')[0].addEventListener('click', setModal);
+                if(!enrolled) {
+                    row.getElementsByTagName('button')[0].addEventListener('click', setModal);
+                }
+                
 
                     
                 idCell.innerText = c.id;
@@ -145,6 +165,7 @@ function DiscoverComponent() {
         
 
     }
+    
 
     function setModal(e) {
         console.log("SETTING MODAL");
