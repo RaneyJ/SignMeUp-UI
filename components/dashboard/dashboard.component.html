@@ -12,21 +12,16 @@
         <th></th>
         <th></th>
         </thead>
-        <tbody id="class-table-body">
-
-        </tbody>
+        <tbody id="class-table-body"></tbody>
     </table>
 
-    <div class="card">
+    <div class="card" id="createClassCard">
         <div class="card-body">
             <button class="btn btn-primary" id="add-student"  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
                 Create Class
             </button>
         </div>
       </div>
-
-    <br/>
-    <hr/>
 
       
       <!-- Update Modal -->
@@ -38,7 +33,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="modal-error-msg-container" style="padding:10px;">
-                <p hidden id="modal-error-msg" class="alert alert-danger" ></p>
+                <p hidden id="update-modal-error-msg" class="alert alert-danger" ></p>
             </div>
 
             <div class="modal-body" id="updateModalBody">
@@ -47,6 +42,7 @@
                     <label for="professorInput">Professor</label>
                     <input type="text" class="form-control" id="professorInput" placeholder="Professor username">
                     <div id="professorSubText" class="form-text">Entering a professor who's not currently teaching will add them</div>
+                    <div id="secondProfessorSubText" class="form-text">Entering a professor who's currently teaching will remove them</div>
                   </div>
 
                   <div class="form-group">
@@ -98,6 +94,11 @@
               <h5 class="modal-title" id="staticBackdropLabel">Create a new Class</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+            <div id="modal-error-msg-container" style="padding:10px;">
+                <p hidden id="create-modal-error-msg" class="alert alert-danger" ></p>
+            </div>
+
             <div class="modal-body">
                 <div class="form-group">
                     <label for="createNameInput">Name</label>

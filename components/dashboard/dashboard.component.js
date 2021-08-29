@@ -13,6 +13,7 @@ function DashboardComponent() {
 
 
     //Modal elements
+    //Update Modal
     let className;
     let updateDescription;
     let updateCapacity = 0;
@@ -21,15 +22,18 @@ function DashboardComponent() {
     let updateOpen;
     let cancelModalElement;
 
+    //Create Modal
+
+    let createModalErrorMessageElement;
     let modalErrorMessageElement;
-    let cancelModalElement;
 
     //Maps
 
-    var dateMap = new Map();
-    var capacityMap = new Map();
-    var numOfProfMap = new Map();
-    var profMap = new Map();
+    let profMap = new Map();
+    let numOfProfMap = new Map();
+    let capacityMap = new Map();
+    let dateMap = new Map();
+
 
     this.render = function() {
 
@@ -48,18 +52,28 @@ function DashboardComponent() {
             welcomeUserElement = document.getElementById('Dashboard-title');
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');  
-            modalErrorMessageElement = document.getElementById('modal-error-msg');    
+            modalErrorMessageElement = document.getElementById('update-modal-error-msg');   
+            createModalErrorMessageElement = document.getElementById('create-modal-error-msg');
             cancelModalElement = document.getElementById('cancelModalButton'); 
-            createClassBtn = document.getElementById('createModalConfirm');
 
 
             AppendUsersClasses(authUser.id);
 
 
             if(authUser.faculty){
-
+                
                 welcomeUserElement.innerText = "Faculty Dashboard";
-                createClassBtn.addEventListener('click',createClass);
+
+
+
+
+                document.getElementById('createModalConfirm').addEventListener('click',createClass);
+                document.getElementById('createNameInput').addEventListener('change',nameCreateHandler);
+                document.getElementById('createCapacityInput').addEventListener('change',capacityCreateHandler);
+                document.getElementById('createOpenInput').addEventListener('change',openCreateHandler);
+                document.getElementById('createDeadlineInput').addEventListener('change',deadlineCreateHandler);
+                document.getElementById('createDescriptionInput').addEventListener('change',descriptionCreateHandler);
+                
 
 
             } else {
@@ -88,7 +102,14 @@ function DashboardComponent() {
     }
 
     function createBody() {
+        // let body = {
+        //     name:
+        //     capacity:
+        //     description:
+        //     openWindow:
+        //     closeWindow:
 
+        // }
     }
 
 
@@ -107,7 +128,7 @@ function DashboardComponent() {
         let data = await response.json();
 
         if(response.status!=200)
-            updateErrorMessage(data.message, false);
+            updateErrorMessage(data.message, '');
         else{
                 //Render faculty classes
                 //currently teaching
@@ -194,9 +215,7 @@ function DashboardComponent() {
                         profArr.push(p.username);
                     }
 
-                    profMap.set(id,profArr);
-                    console.log('profmap:'+profMap.get(id));
-                    
+                    profMap.set(id,profArr);                    
                     numOfProfMap.set(id,numOfProf);
 
                 } 
@@ -204,6 +223,8 @@ function DashboardComponent() {
                     //Render student dash
                     //Classes currently enrolled in.
                     //Should have: title of class, description, and headcount / capacity
+
+                    document.getElementById('createClassCard').hidden=true;
                 
                 for(let c of data){
                     let id = c.id;
@@ -284,7 +305,7 @@ function DashboardComponent() {
     }
 
     function setModal(e){
-        updateErrorMessage('',false);
+        updateErrorMessage('','');
 
         let row = e.target.parentNode.parentNode
         let elements = row.getElementsByTagName('td');
@@ -296,8 +317,6 @@ function DashboardComponent() {
         updateDeadline = dateMap.get(modal_id)[1];
         updateOpen = dateMap.get(modal_id)[0];
         updateDescription = elements[1].innerText;
-
-        console.log("cap:"+updateCapacity+"  deadline:"+updateDeadline+"   desc:"+updateDescription);
 
         document.getElementById('updateModalLabel').innerText = `${className} | ${elements[2].innerText}`;
         document.getElementById('descriptionInput').innerText = updateDescription;           //If broken use `${elements[1].innerText}`
@@ -316,7 +335,7 @@ function DashboardComponent() {
     }
 
     function setDelModal(e){
-        updateErrorMessage('',false);
+        updateErrorMessage('','');
 
         let row = e.target.parentNode.parentNode
         let elements = row.getElementsByTagName('td');
@@ -335,28 +354,47 @@ function DashboardComponent() {
 
     async function updateModal() {
 
+        try{
+            let response = await fetch(`${env.apiUrl}/classes/?id=${modal_id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': state.JWT
+                },
+                body: buildUpdateBody()
+            });
+
+            let data = await response.json();
+
+            if(response.status!=201)
+                updateErrorMessage(data.message,'');
+            else{
+                updateErrorMessage('','update');
+                router.navigate('/dashboard');
+            }
+        }catch(e){
+            console.log(e);
+        }
+        
+    }
+    async function deleteModal(){
         let response = await fetch(`${env.apiUrl}/classes/?id=${modal_id}`, {
-            method: 'PUT',
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': state.JWT
-            },
-            body: buildUpdateBody()
+            }
         })
 
         let data = await response.json();
 
         console.log(data);
 
-        if(response.status!=201)
-            updateErrorMessage(data.message, false);
-
-
-        cancelModalElement.click();
-        
-    }
-    function deleteModal(){
-        console.log(modal_id);
+        if(response.status!=200)
+            updateErrorMessage(data.message,'');
+        else{
+            updateErrorMessage('','update');
+        }
     }
 
     var modal_id = undefined;
@@ -386,16 +424,6 @@ function DashboardComponent() {
             console.error(err);
         }
     }
-    
-    function updateErrorMessage(errorMessage) {
-        if (errorMessage) {
-            errorMessageElement.removeAttribute('hidden');
-            errorMessageElement.innerText = errorMessage;
-        } else {
-            errorMessageElement.setAttribute('hidden', 'true');
-            errorMessageElement.innerText = '';
-        }
-    }
 
     function buildUpdateBody(){
 
@@ -407,6 +435,8 @@ function DashboardComponent() {
             closeWindow: updateDeadline,
             faculty: undefined,
         }
+
+        console.log(updateProfessor);
 
         if(updateProfessor)
             body.faculty = updateProfessor;
@@ -425,24 +455,23 @@ function DashboardComponent() {
         let input = e.target.value;
 
         if(new Date(input).getTime() < Date.now()){
-            updateErrorMessage('Deadline must be a future date',true);
+            updateErrorMessage('Deadline must be a future date','update');
             e.target.value = undefined;
         }
         else{
-            updateErrorMessage('',true);
+            updateErrorMessage('','update');
             updateDeadline = new Date(input).getTime().toString();
         }
     }
 
     function capactiyChangeHandler(e){
         let input = e.target.value;
-        console.log("in cap change handler");
 
-        if(input<=0 || input > 100){
-            updateErrorMessage('Capacity must be greater than 0 and less than 100', true);
+        if(input<=0 || input > 200){
+            updateErrorMessage('Capacity must be greater than 0 and less than 200', 'update');
             e.target.value = updateCapacity;
         } else {
-            updateErrorMessage('',true);
+            updateErrorMessage('','update');
             console.log('change capacityInput '+input);
             updateCapacity = input;
         }
@@ -450,27 +479,50 @@ function DashboardComponent() {
 
     function profChangeHandler(e){
 
-        console.log(numOfProfMap.get(modal_id));
-
         if(profMap.get(modal_id).includes(e.target.value)){
             if(numOfProfMap.get(modal_id)<2){                                   //Dont allow user to remove the only professor
-                updateErrorMessage('Unable to remove the only teaching professor!', true);
+                updateErrorMessage('Unable to remove the only teaching professor!', 'update');
                 updateProfessor = undefined;
                 e.target.value = '';
             }else {
-            updateErrorMessage(`This will remove ${e.target.value} from the class!`,true )
+            updateErrorMessage(`This will remove ${e.target.value} from the class! click again to confirm`,'update')
             updateProfessor = e.target.value;
             }
 
         }else {
-            updateErrorMessage('',true);
+            updateErrorMessage('','update');
             updateProfessor = e.target.value;
         }
 
     }
+
+    function capacityCreateHandler(e){
+
+        console.log("--Cap change Handler--");
+        console.log(e.target.parentNode);
+        console.log(e.target.parentNode.parentNode);
+
+    }
+
+    function openCreateHandler(e){}
+    function deadlineCreateHandler(e){}
+    function descriptionCreateHandler(e){}
+
+    function nameCreateHandler(e){
+
+        if(e.target.value.length>50){
+            className = undefined;
+            updateErrorMessage('Provide a name shorter than 50 characters','create');
+            e.target.value = '';
+        }
+        else{
+            updateErrorMessage('','create');
+            className = e.target.value;
+        }
+    }
     
     function updateErrorMessage(errorMessage,modal) {
-        if(modal){
+        if(modal==='update'){
             if (errorMessage) {
                 modalErrorMessageElement.removeAttribute('hidden');
                 modalErrorMessageElement.innerText = errorMessage;
@@ -478,8 +530,17 @@ function DashboardComponent() {
                 modalErrorMessageElement.setAttribute('hidden', 'true');
                 modalErrorMessageElement.innerText = '';
             }
-        }
-        else {
+        } else if(modal ==='create'){
+
+            if (errorMessage) {
+                createModalErrorMessageElement.removeAttribute('hidden');
+                createModalErrorMessageElement.innerText = errorMessage;
+            } else {
+                createModalErrorMessageElement.setAttribute('hidden', 'true');
+                createModalErrorMessageElement.innerText = '';
+            }
+        } else {
+
             if (errorMessage) {
                 errorMessageElement.removeAttribute('hidden');
                 errorMessageElement.innerText = errorMessage;
@@ -488,9 +549,7 @@ function DashboardComponent() {
                 errorMessageElement.innerText = '';
             }
         }
-        
     }
-
 }
 
 export default new DashboardComponent();
