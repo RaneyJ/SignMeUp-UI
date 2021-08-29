@@ -10,7 +10,25 @@ function DiscoverComponent() {
     let tableBodyElement;
     let errorMessageElement;
     let modalElement;
-    let confirmElementTemplate;
+    let cancelModalElement;
+    let showCheckboxElement;
+
+    let showAll = false;
+
+    function updateShowAll(e) {
+        showAll = e.target.checked;
+
+        if(showAll == true) {
+            renderTable();
+        } else {
+            renderTable();
+        }
+    }
+
+    function renderTable() {
+        AppendUsersClasses();
+    }
+
 
     this.render = function() {
 
@@ -33,6 +51,10 @@ function DiscoverComponent() {
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');
             modalElement = document.getElementById('exampleModal');
+            cancelModalElement = document.getElementById('cancelModalButton');
+            showCheckboxElement = document.getElementById('show-all-container');
+
+            showCheckboxElement.addEventListener('change', updateShowAll);
 
             AppendUsersClasses();
 
@@ -46,7 +68,9 @@ function DiscoverComponent() {
 
     async function AppendUsersClasses(){
 
-        console.log('appending the classes')
+        //Clearing table
+        let table = document.getElementById('class-table-body');
+        table.innerHTML = '';
         
         let response = await fetch(`${env.apiUrl}/classes`, {
             method: 'GET',
@@ -67,6 +91,17 @@ function DiscoverComponent() {
                 //Should have: title of class, description, and headcount / capacity
                 
             for(let c of data){
+                let enrolled = false;
+                for(let stu of c.students) {
+                    if(stu.id === state.authUser.id) {
+                        enrolled = true;
+                        break;
+                    }
+                }
+
+                if(enrolled && !showAll) {
+                    break;
+                }
 
                 let row = document.createElement('tr');
                 row.setAttribute('data-toggle', "modal");
@@ -80,12 +115,22 @@ function DiscoverComponent() {
                 let capacityCell = document.createElement('td');
                 let enrollCell = document.createElement('td');
 
-                let button = 
-                `
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Enroll
-                </button>
-                `
+                let button = ''
+                if(!enrolled) {
+                    button = 
+                    `
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Enroll
+                    </button>
+                    `
+                } else {
+                    button =
+                    `
+                    <button type="button" class="btn btn-secondary" disabled>
+                    Enroll
+                    </button>
+                    `
+                }
                 enrollCell.innerHTML = button;
 
 
@@ -99,11 +144,12 @@ function DiscoverComponent() {
                 row.appendChild(capacityCell);
                 row.appendChild(enrollCell);
 
-
-                let table = document.getElementById('class-table-body');
                 table.appendChild(row);
 
-                row.getElementsByTagName('button')[0].addEventListener('click', setModal);
+                if(!enrolled) {
+                    row.getElementsByTagName('button')[0].addEventListener('click', setModal);
+                }
+                
 
                     
                 idCell.innerText = c.id;
@@ -119,6 +165,7 @@ function DiscoverComponent() {
         
 
     }
+    
 
     function setModal(e) {
         console.log("SETTING MODAL");
@@ -135,8 +182,28 @@ function DiscoverComponent() {
     }
 
     var modal_id = undefined;
-    function enroll() {
+    async function enroll() {
         console.log(modal_id);
+
+        try{
+
+            let response = await fetch(`${env.apiUrl}/enrollment/?user_id=${state.authUser.id}&class_id=${modal_id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': state.JWT
+                }
+            })
+            if(response.status != 201)
+                updateErrorMessage(data.message);
+            else{
+                cancelModalElement.click();
+                router.navigate('/dashboard');
+            }
+
+        } catch(err){
+            console.error(err);
+        }
     }
     
     function updateErrorMessage(errorMessage) {
