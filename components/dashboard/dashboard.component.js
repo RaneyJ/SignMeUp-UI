@@ -9,8 +9,6 @@ function DashboardComponent() {
     let welcomeUserElement;
     let tableBodyElement;
     let errorMessageElement;
-    let createClassBtn;
-
 
     //Modal elements
     //Update Modal
@@ -21,6 +19,7 @@ function DashboardComponent() {
     let updateDeadline;
     let updateOpen;
     let cancelModalElement;
+    let cancelModalElement2;
 
     //Create Modal
 
@@ -52,9 +51,12 @@ function DashboardComponent() {
             welcomeUserElement = document.getElementById('Dashboard-title');
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');  
+
             modalErrorMessageElement = document.getElementById('update-modal-error-msg');   
             createModalErrorMessageElement = document.getElementById('create-modal-error-msg');
+            
             cancelModalElement = document.getElementById('cancelModalButton'); 
+            cancelModalElement2 = document.getElementById('exampleCancelModalButton');
 
 
             AppendUsersClasses(authUser.id);
@@ -416,7 +418,7 @@ function DashboardComponent() {
                 let data = await response.json();
                 updateErrorMessage(data.message);
             }else{
-                cancelModalElement.click();
+                cancelModalElement2.click();
                 router.navigate('/dashboard');
             }
 
