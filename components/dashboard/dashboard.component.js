@@ -20,9 +20,9 @@ function DashboardComponent() {
     let updateDeadline;
     let updateOpen;
     let cancelModalElement;
+    let cancelModalElement2;
 
     let modalErrorMessageElement;
-    let cancelModalElement;
 
     //Maps
 
@@ -49,7 +49,8 @@ function DashboardComponent() {
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');  
             modalErrorMessageElement = document.getElementById('modal-error-msg');    
-            cancelModalElement = document.getElementById('cancelModalButton'); 
+            cancelModalElement = document.getElementById('cancelModalButton');
+            cancelModalElement2 = document.getElementById('exampleCancelModalButton');
             createClassBtn = document.getElementById('createModalConfirm');
 
 
@@ -378,7 +379,7 @@ function DashboardComponent() {
                 let data = await response.json();
                 updateErrorMessage(data.message);
             }else{
-                cancelModalElement.click();
+                cancelModalElement2.click();
                 router.navigate('/dashboard');
             }
 
