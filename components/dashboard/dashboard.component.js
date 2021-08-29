@@ -9,7 +9,8 @@ function DashboardComponent() {
     let welcomeUserElement;
     let tableBodyElement;
     let errorMessageElement;
-    let modalErrorMessageElement;
+    let createClassBtn;
+
 
     //Modal elements
     let className;
@@ -18,6 +19,11 @@ function DashboardComponent() {
     let updateProfessor;
     let updateDeadline;
     let updateOpen;
+
+    let modalErrorMessageElement;
+    let cancelModalElement;
+
+    //Maps
 
     var dateMap = new Map();
     var capacityMap = new Map();
@@ -41,7 +47,9 @@ function DashboardComponent() {
             welcomeUserElement = document.getElementById('Dashboard-title');
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');  
-            modalErrorMessageElement = document.getElementById('modal-error-msg');      
+            modalErrorMessageElement = document.getElementById('modal-error-msg');    
+            cancelModalElement = document.getElementById('cancelModalButton'); 
+            createClassBtn = document.getElementById('createModalConfirm');
 
 
             AppendUsersClasses(authUser.id);
@@ -51,19 +59,35 @@ function DashboardComponent() {
             if(authUser.faculty){
 
                 welcomeUserElement.innerText = "Faculty Dashboard";
-
+                createClassBtn.addEventListener('click',createClass);
 
 
             } else {
 
                 welcomeUserElement.innerText = "Student Dashboard";
 
-
             }
             
             window.history.pushState('dashboard', 'Dashboard', '/dashboard');
 
         });
+
+    }
+
+    async function createClass(){
+
+        let response = await fetch(`${env.apiUrl}/classes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': state.JWT
+            },
+            body: createBody()
+        })
+
+    }
+
+    function createBody() {
 
     }
 
@@ -120,8 +144,15 @@ function DashboardComponent() {
                     //----Work with capacities----
                     let bsSpan = document.createElement('span')
 
-                    bsSpan.className = 'badge bg-info text-dark';
                     bsSpan.innerText = Object.keys(c.students).length+"/"+c.capacity;
+                    let badgeIndex = (c.students).length/c.capacity==1;
+                    if(badgeIndex==1)
+                        bsSpan.className = 'badge bg-danger';
+                    else if(badgeIndex>=.85)
+                        bsSpan.className = 'bg-warning text-dark';
+                    else
+                        bsSpan.className = 'badge bg-info text-dark';
+
                     
                     capacityCell.appendChild(bsSpan);
                     capacityCell.style.width = '5%';   
@@ -184,6 +215,20 @@ function DashboardComponent() {
                     let capacityCell = document.createElement('td');
                     let interactCell = document.createElement('td');
 
+
+                    let bsSpan = document.createElement('span')
+
+                    bsSpan.innerText = Object.keys(c.students).length+"/"+c.capacity;
+                    let badgeIndex = (c.students).length/c.capacity==1;
+                    if(badgeIndex==1)
+                        bsSpan.className = 'badge bg-danger';
+                    else if(badgeIndex>=.85)
+                        bsSpan.className = 'bg-warning text-dark';
+                    else
+                        bsSpan.className = 'badge bg-info text-dark';
+
+                    capacityCell.appendChild(bsSpan);
+
                     capacityCell.style.width = '5%';
 
                     row.key = id;
@@ -217,13 +262,12 @@ function DashboardComponent() {
     }
 
     function setModal(e){
+        updateErrorMessage('',false);
 
         let row = e.target.parentNode.parentNode
         let elements = row.getElementsByTagName('td');
         
         modal_id = row.key;
-
-
 
         className = elements[0].innerText;
         updateCapacity = capacityMap.get(modal_id);
@@ -241,24 +285,26 @@ function DashboardComponent() {
         let confirm = document.getElementById('updateModalConfirm');
 
         //Event listeners
-        document.getElementById('professorInput').addEventListener('keyup',profRadioHandler);
         document.getElementById('professorInput').addEventListener('change',profChangeHandler);
         document.getElementById('deadlineInput').addEventListener('change',dateChangeHandler);
         document.getElementById('capacityInput').addEventListener('change',capactiyChangeHandler);
         document.getElementById('descriptionInput').addEventListener('change', descriptionChangeHandler);
+
         confirm.addEventListener('click', updateModal);
     }
 
     function setDelModal(e){
-        let row = e.target.parentNode.parentNode;
+        updateErrorMessage('',false);
 
+        let row = e.target.parentNode.parentNode
         let elements = row.getElementsByTagName('td');
+        
+        modal_id = row.key;
+
         document.getElementById('deleteModalLabel').innerText = `${elements[0].innerText} | ${elements[2].innerText}`;
-        document.getElementById('deleteModalBody').innerText = `${elements[1].innerText}`;
+        document.getElementById('deleteModalBody').innerText = `Are you sure you wish to delete this class?`;
 
         let confirm = document.getElementById('deleteModalConfirm');
-
-        modal_id = row.key;
 
         confirm.addEventListener('click', deleteModal);
     }
@@ -273,22 +319,25 @@ function DashboardComponent() {
                 'Content-Type': 'application/json',
                 'Authorization': state.JWT
             },
-            body: buildBody()
+            body: buildUpdateBody()
         })
 
         let data = await response.json();
 
         console.log(data);
 
-        if(response.status!=200)
+        if(response.status!=201)
             updateErrorMessage(data.message, false);
+
+
+        cancelModalElement.click();
         
     }
     function deleteModal(){
         console.log(modal_id);
     }
 
-    function buildBody(){
+    function buildUpdateBody(){
         console.log('updateCapacity'+updateCapacity);
         let body = {
             capacity: updateCapacity,
@@ -339,35 +388,25 @@ function DashboardComponent() {
     }
 
     function profChangeHandler(e){
-        let input = e.target.value;
 
-        if(document.getElementById('addProfRadio').attributes.getNamedItem('checked') && profMap.get(modal_id).includes(input) ){
-            updateErrorMessage('Cannot add a professor that is already teaching this class',true);
-        } else if(document.getElementById('removeProfRadio').attributes.getNamedItem('checked') && !profMap.get(modal_id).includes(input)){
-            updateErrorMessage('Cannot remove a professor that is not teaching this class',true);
-        } else if(input){
-            //Check for valid professor
-            updateProfessor = input;
+        console.log(numOfProfMap.get(modal_id));
+
+        if(profMap.get(modal_id).includes(e.target.value)){
+            if(numOfProfMap.get(modal_id)<2){                                   //Dont allow user to remove the only professor
+                updateErrorMessage('Unable to remove the only teaching professor!', true);
+                updateProfessor = undefined;
+                e.target.value = '';
+            }else {
+            updateErrorMessage(`This will remove ${e.target.value} from the class!`,true )
+            updateProfessor = e.target.value;
+            }
+
+        }else {
             updateErrorMessage('',true);
+            updateProfessor = e.target.value;
         }
 
     }
-
-    function profRadioHandler(e){
-        let input = e.target.value;
-    
-        //Either add or Remove a single professor from the class
-        if(input.length > 0 ){
-            document.getElementById('addProfRadio').removeAttribute('disabled');
-            if(numOfProfMap.get(modal_id)>=2)                                   //Dont allow user to remove the only professor
-                document.getElementById('removeProfRadio').removeAttribute('disabled');
-        } else {
-            document.getElementById('addProfRadio').setAttribute('disabled','true');
-            document.getElementById('removeProfRadio').setAttribute('disabled','true');
-        }
-
-    }
-
     
     function updateErrorMessage(errorMessage,modal) {
         if(modal){

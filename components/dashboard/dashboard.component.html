@@ -2,10 +2,8 @@
 
     <h1 id = "Dashboard-title">Welcome you</h1>
 
-
-    <div class="well">Well here</div>
-
-    <table class="table" id="class-table">
+    <table class="table table-hover" id="class-table">
+    <!-- <table class="table" id="class-table"> -->
         <thead>
         <th>Title</th>
         <th>Description</th>
@@ -19,7 +17,14 @@
         </tbody>
     </table>
 
-    <button class="btn btn-primary" id="add-student">Create Class</button>
+    <div class="card">
+        <div class="card-body">
+            <button class="btn btn-primary" id="add-student"  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+                Create Class
+            </button>
+        </div>
+      </div>
+
     <br/>
     <hr/>
 
@@ -32,27 +37,16 @@
               <h5 class="modal-title" id="updateModalLabel">Modal title</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="modal-error-msg-container">
-                <p hidden id="modal-error-msg" class="alert alert-danger"></p>
+            <div id="modal-error-msg-container" style="padding:10px;">
+                <p hidden id="modal-error-msg" class="alert alert-danger" ></p>
             </div>
+
             <div class="modal-body" id="updateModalBody">
 
                   <div class="form-group">
                     <label for="professorInput">Professor</label>
                     <input type="text" class="form-control" id="professorInput" placeholder="Professor username">
-                  </div>
-
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="profRadio" id="addProfRadio" checked disabled>
-                    <label class="form-check-label" for="addProfRadio">
-                      Add
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="profRadio" id="removeProfRadio" disabled>
-                    <label class="form-check-label" for="removeProfRadio">
-                      Remove
-                    </label>
+                    <div id="professorSubText" class="form-text">Entering a professor who's not currently teaching will add them</div>
                   </div>
 
                   <div class="form-group">
@@ -70,7 +64,7 @@
                   </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelModalButton">Close</button>
               <button type="button" class="btn btn-primary" id="updateModalConfirm">Confirm</button>
             </div>
           </div>
@@ -95,6 +89,50 @@
         </div>
         </div>
     </div>
+
+    <!-- Create Modal -->
+
+    <div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Create a new Class</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="createNameInput">Name</label>
+                    <input type="text" class="form-control" id="createNameInput" placeholder="Class name">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="createCapacityInput">Capacity</label>
+                    <input type="number" class="form-control" id="createCapacityInput" placeholder="Capacity">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="createOpenInput">Open Date</label>
+                    <input type="date" class="form-control" id="createOpenInput">
+                    <div id="createOpenSubText" class="form-text">Open window must be at a future date</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="createDeadlineInput">Close Date</label>
+                    <input type="date" class="form-control" id="createDeadlineInput">
+                    <div id="createDeadlineSubtext" class="form-text">Deadline to enroll must be after opening window date</div>
+                  </div>
+                  <div class="input-group" style="margin-top: 5px;">
+                    <span class="input-group-text">Class description</span>
+                    <textarea class="form-control" aria-label="With textarea" id="createDescriptionInput"></textarea>
+                  </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="createModalConfirm">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
     <div id="error-msg-container">
         <p hidden id="error-msg" class="alert alert-danger"></p>
