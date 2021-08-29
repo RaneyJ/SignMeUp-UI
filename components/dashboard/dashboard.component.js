@@ -19,6 +19,7 @@ function DashboardComponent() {
     let updateProfessor;
     let updateDeadline;
     let updateOpen;
+    let cancelModalElement;
 
     let modalErrorMessageElement;
     let cancelModalElement;
@@ -53,7 +54,6 @@ function DashboardComponent() {
 
 
             AppendUsersClasses(authUser.id);
-
 
 
             if(authUser.faculty){
@@ -214,6 +214,7 @@ function DashboardComponent() {
                     let professorCell = document.createElement('td');
                     let capacityCell = document.createElement('td');
                     let interactCell = document.createElement('td');
+                    row.key = id;
 
 
                     let bsSpan = document.createElement('span')
@@ -230,6 +231,14 @@ function DashboardComponent() {
                     capacityCell.appendChild(bsSpan);
 
                     capacityCell.style.width = '5%';
+                    let button = ''
+                    button = 
+                    `
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Unenroll
+                    </button>
+                    `
+                    interactCell.innerHTML = button;
 
                     row.key = id;
                     dateMap.set( id , [c.openWindow, c.closeWindow]);
@@ -242,8 +251,9 @@ function DashboardComponent() {
                     row.appendChild(capacityCell);
                     row.appendChild(interactCell);
 
-
+                    row.getElementsByTagName('button')[0].addEventListener('click', setStudentModal);
                     document.getElementById('class-table-body').appendChild(row);
+                    
 
 
 
@@ -259,6 +269,18 @@ function DashboardComponent() {
             
         }
 
+    }
+
+    function setStudentModal(e) {
+        let row = e.target.parentNode.parentNode
+        let elements = row.getElementsByTagName('td');
+        document.getElementById('exampleModalLabel').innerText = `Unenroll from: ${elements[0].innerText} | ${elements[1].innerText}?`;
+        document.getElementById('exampleModalBody').innerText = `${elements[2].innerText}`;
+        let confirm = document.getElementById('exampleModalConfirm');
+        
+        
+        modal_id = row.key;
+        confirm.addEventListener('click', unenroll);
     }
 
     function setModal(e){
@@ -337,7 +359,46 @@ function DashboardComponent() {
         console.log(modal_id);
     }
 
+    var modal_id = undefined;
+    
+    async function unenroll() {
+        console.log(modal_id);
+
+        try{
+
+            let response = await fetch(`${env.apiUrl}/enrollment/?user_id=${state.authUser.id}&class_id=${modal_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': state.JWT
+                }
+            })
+
+            if(response.status != 201) {
+                let data = await response.json();
+                updateErrorMessage(data.message);
+            }else{
+                cancelModalElement.click();
+                router.navigate('/dashboard');
+            }
+
+        } catch(err){
+            console.error(err);
+        }
+    }
+    
+    function updateErrorMessage(errorMessage) {
+        if (errorMessage) {
+            errorMessageElement.removeAttribute('hidden');
+            errorMessageElement.innerText = errorMessage;
+        } else {
+            errorMessageElement.setAttribute('hidden', 'true');
+            errorMessageElement.innerText = '';
+        }
+    }
+
     function buildUpdateBody(){
+
         console.log('updateCapacity'+updateCapacity);
         let body = {
             capacity: updateCapacity,
