@@ -32,14 +32,14 @@ function DiscoverComponent() {
 
     this.render = function() {
 
-        console.log(state);
-
         if (!state.authUser) {
             router.navigate('/login');
             return;
         } else if(state.authUser.faculty === true) {
             //Faculty shouldnt be here
+            console.log("IN HERE")
             router.navigate('/dashboard');
+            return;
         }
 
         let authUser = state.authUser;
@@ -56,6 +56,7 @@ function DiscoverComponent() {
 
             showCheckboxElement.addEventListener('change', updateShowAll);
 
+            showAll = false;
             AppendUsersClasses();
 
             welcomeUserElement.innerText = "Discover Classes";
@@ -92,12 +93,15 @@ function DiscoverComponent() {
                 
             for(let c of data){
                 let enrolled = false;
+                console.log(data)
+                console.log(state.authUser.id)
                 for(let stu of c.students) {
                     if(stu.id === state.authUser.id) {
                         enrolled = true;
                         break;
                     }
                 }
+                console.log(showAll);
 
                 if(enrolled && !showAll) {
                     break;
@@ -182,6 +186,7 @@ function DiscoverComponent() {
     }
 
     var modal_id = undefined;
+    
     async function enroll() {
         console.log(modal_id);
 
