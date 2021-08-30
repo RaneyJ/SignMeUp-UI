@@ -90,21 +90,22 @@ function DiscoverComponent() {
                 //Render student dash
                 //Classes currently enrolled in.
                 //Should have: title of class, description, and headcount / capacity
-                
+            console.log("HERE")
             for(let c of data){
                 let enrolled = false;
-                console.log(data)
-                console.log(state.authUser.id)
                 for(let stu of c.students) {
                     if(stu.id === state.authUser.id) {
                         enrolled = true;
-                        break;
                     }
                 }
-                console.log(showAll);
 
                 if(enrolled && !showAll) {
-                    break;
+                    console.log("HIDING")
+                    console.log(c)
+                    continue;
+                } else {
+                    console.log("SHOWING")
+                    console.log(c);
                 }
 
                 let row = document.createElement('tr');
