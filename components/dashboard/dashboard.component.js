@@ -75,7 +75,9 @@ function DashboardComponent() {
             } else {
 
                 document.getElementById('createClassCard').hidden=true;
+                document.getElementById('deleteHead').remove();
                 welcomeUserElement.innerText = "Student Dashboard";
+
 
             }
             
@@ -384,7 +386,7 @@ function DashboardComponent() {
                 updateDeadline = undefined;
                 updateDescription = undefined;
                 updateProfessor = undefined;
-                router.navigate('/dashboard');
+                AppendUsersClasses();
             }
         }catch(e){
             console.log(e);
@@ -408,7 +410,7 @@ function DashboardComponent() {
             updateErrorMessage('','update');
             document.getElementById('cancelDeleteModalButton').click();
             
-            router.navigate('/dashboard');
+            AppendUsersClasses();
         }
     }
 

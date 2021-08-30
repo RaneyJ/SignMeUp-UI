@@ -112,7 +112,6 @@ function DiscoverComponent() {
                 row.setAttribute('data-target', '#exampleModal');
 
 
-                let idCell = document.createElement('td');
                 let titleCell = document.createElement('td');
                 let descriptionCell = document.createElement('td');
                 let professorCell = document.createElement('td');
@@ -141,7 +140,6 @@ function DiscoverComponent() {
                 row.key = c.id
                 capacityCell.style.width = '5%';
 
-                row.appendChild(idCell);
                 row.appendChild(titleCell);
                 row.appendChild(descriptionCell);
                 row.appendChild(professorCell);
@@ -155,8 +153,6 @@ function DiscoverComponent() {
                 }
                 
 
-                    
-                idCell.innerText = c.id;
                 titleCell.innerText = c.name;
                 descriptionCell.innerText = c.description;
                 capacityCell.innerText = Object.keys(c.students).length+"/"+c.capacity;
