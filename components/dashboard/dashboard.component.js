@@ -386,7 +386,7 @@ function DashboardComponent() {
                 updateDeadline = undefined;
                 updateDescription = undefined;
                 updateProfessor = undefined;
-                AppendUsersClasses();
+                AppendUsersClasses(authUser.id);
             }
         }catch(e){
             console.log(e);
@@ -410,7 +410,7 @@ function DashboardComponent() {
             updateErrorMessage('','update');
             document.getElementById('cancelDeleteModalButton').click();
             
-            AppendUsersClasses();
+            AppendUsersClasses(authUser.id);
         }
     }
 
