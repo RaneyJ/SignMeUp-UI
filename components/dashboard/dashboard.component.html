@@ -79,7 +79,7 @@
                 ...
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelDeleteModalButton">Close</button>
                 <button type="button" class="btn btn-danger" id="deleteModalConfirm">Confirm</button>
             </div>
         </div>
@@ -99,7 +99,7 @@
                 <p hidden id="create-modal-error-msg" class="alert alert-danger" ></p>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body" id="createModalBody">
                 <div class="form-group">
                     <label for="createNameInput">Name</label>
                     <input type="text" class="form-control" id="createNameInput" placeholder="Class name">
@@ -126,7 +126,7 @@
                   </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id= "cancelCreateModalButton">Close</button>
               <button type="button" class="btn btn-primary" id="createModalConfirm">Confirm</button>
             </div>
           </div>

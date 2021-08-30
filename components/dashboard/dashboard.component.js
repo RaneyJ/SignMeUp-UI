@@ -51,35 +51,30 @@ function DashboardComponent() {
             welcomeUserElement = document.getElementById('Dashboard-title');
             tableBodyElement = document.getElementById('class-table-body');
             errorMessageElement = document.getElementById('error-msg');  
-
-            modalErrorMessageElement = document.getElementById('update-modal-error-msg');   
-            createModalErrorMessageElement = document.getElementById('create-modal-error-msg');
             
-            cancelModalElement = document.getElementById('cancelModalButton'); 
             cancelModalElement2 = document.getElementById('exampleCancelModalButton');
 
 
             AppendUsersClasses(authUser.id);
 
-
             if(authUser.faculty){
                 
                 welcomeUserElement.innerText = "Faculty Dashboard";
 
-
-
+                modalErrorMessageElement = document.getElementById('update-modal-error-msg');   
+                createModalErrorMessageElement = document.getElementById('create-modal-error-msg');
+                cancelModalElement = document.getElementById('cancelModalButton'); 
 
                 document.getElementById('createModalConfirm').addEventListener('click',createClass);
                 document.getElementById('createNameInput').addEventListener('change',nameCreateHandler);
-                document.getElementById('createCapacityInput').addEventListener('change',capacityCreateHandler);
-                document.getElementById('createOpenInput').addEventListener('change',openCreateHandler);
-                document.getElementById('createDeadlineInput').addEventListener('change',deadlineCreateHandler);
-                document.getElementById('createDescriptionInput').addEventListener('change',descriptionCreateHandler);
-                
-
+                document.getElementById('createCapacityInput').addEventListener('change',capactiyChangeHandler);
+                document.getElementById('createOpenInput').addEventListener('change',openChangeHandler);
+                document.getElementById('createDeadlineInput').addEventListener('change',dateChangeHandler);
+                document.getElementById('createDescriptionInput').addEventListener('change',descriptionChangeHandler);
 
             } else {
 
+                document.getElementById('createClassCard').hidden=true;
                 welcomeUserElement.innerText = "Student Dashboard";
 
             }
@@ -92,28 +87,58 @@ function DashboardComponent() {
 
     async function createClass(){
 
-        let response = await fetch(`${env.apiUrl}/classes`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': state.JWT
-            },
-            body: createBody()
-        })
+        if(!updateCapacity||!updateDeadline||!updateDescription||!updateOpen||!className){
+            updateErrorMessage('Not all necessary fields were filled','create');
+            return;
+        }
+        else 
+            updateErrorMessage('','create');
+        
 
+        try{
+            let response = await fetch(`${env.apiUrl}/classes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': state.JWT
+                },
+                body: createBody()
+            })
+
+            let data = await response.json();
+
+            console.log(data);
+
+            if(response.status!=201)
+                updateErrorMessage(data.message,'create');
+            else{
+                document.getElementById('cancelCreateModalButton').click();
+                updateErrorMessage('','create');
+                className = undefined;
+                updateCapacity=undefined;
+                updateDescription=undefined;
+                updateOpen=undefined;
+                updateDeadline=undefined;
+                router.navigate('/dashboard');
+            }
+            
+        }catch(e){
+            console.log(e);
+        }
+        
     }
 
     function createBody() {
-        // let body = {
-        //     name:
-        //     capacity:
-        //     description:
-        //     openWindow:
-        //     closeWindow:
+        let body = {
+            name: className,
+            capacity: updateCapacity,
+            description: updateDescription,
+            openWindow: updateOpen,
+            closeWindow: updateDeadline
+        }
 
-        // }
+        return JSON.stringify(body);
     }
-
 
 
     async function AppendUsersClasses(id){
@@ -168,13 +193,8 @@ function DashboardComponent() {
                     let bsSpan = document.createElement('span')
 
                     bsSpan.innerText = Object.keys(c.students).length+"/"+c.capacity;
-                    let badgeIndex = (c.students).length/c.capacity==1;
-                    if(badgeIndex==1)
-                        bsSpan.className = 'badge bg-danger';
-                    else if(badgeIndex>=.85)
-                        bsSpan.className = 'bg-warning text-dark';
-                    else
-                        bsSpan.className = 'badge bg-info text-dark';
+
+                    bsSpan.className = 'badge bg-info text-dark';
 
                     
                     capacityCell.appendChild(bsSpan);
@@ -222,11 +242,6 @@ function DashboardComponent() {
 
                 } 
             }else {
-                    //Render student dash
-                    //Classes currently enrolled in.
-                    //Should have: title of class, description, and headcount / capacity
-
-                    document.getElementById('createClassCard').hidden=true;
                 
                 for(let c of data){
                     let id = c.id;
@@ -240,16 +255,11 @@ function DashboardComponent() {
                     row.key = id;
 
 
-                    let bsSpan = document.createElement('span')
+                    let bsSpan = document.createElement('span');
 
                     bsSpan.innerText = Object.keys(c.students).length+"/"+c.capacity;
-                    let badgeIndex = (c.students).length/c.capacity==1;
-                    if(badgeIndex==1)
-                        bsSpan.className = 'badge bg-danger';
-                    else if(badgeIndex>=.85)
-                        bsSpan.className = 'bg-warning text-dark';
-                    else
-                        bsSpan.className = 'badge bg-info text-dark';
+
+                    bsSpan.className = 'badge bg-info text-dark';
 
                     capacityCell.appendChild(bsSpan);
 
@@ -269,16 +279,13 @@ function DashboardComponent() {
         
                     // Append cells to the row
                     row.appendChild(titleCell);
-                    row.appendChild(professorCell);
                     row.appendChild(descriptionCell);
+                    row.appendChild(professorCell);
                     row.appendChild(capacityCell);
                     row.appendChild(interactCell);
 
                     row.getElementsByTagName('button')[0].addEventListener('click', setStudentModal);
                     document.getElementById('class-table-body').appendChild(row);
-                    
-
-
 
                     titleCell.innerText = c.name;
                     descriptionCell.innerText = c.description;
@@ -371,13 +378,18 @@ function DashboardComponent() {
             if(response.status!=201)
                 updateErrorMessage(data.message,'');
             else{
+                cancelModalElement.click();
                 updateErrorMessage('','update');
+                updateCapacity = undefined;
+                updateDeadline = undefined;
+                updateDescription = undefined;
+                updateProfessor = undefined;
                 router.navigate('/dashboard');
             }
         }catch(e){
             console.log(e);
         }
-        
+
     }
     async function deleteModal(){
         let response = await fetch(`${env.apiUrl}/classes/?id=${modal_id}`, {
@@ -390,12 +402,13 @@ function DashboardComponent() {
 
         let data = await response.json();
 
-        console.log(data);
-
         if(response.status!=200)
             updateErrorMessage(data.message,'');
         else{
             updateErrorMessage('','update');
+            document.getElementById('cancelDeleteModalButton').click();
+            
+            router.navigate('/dashboard');
         }
     }
 
@@ -429,7 +442,6 @@ function DashboardComponent() {
 
     function buildUpdateBody(){
 
-        console.log('updateCapacity'+updateCapacity);
         let body = {
             capacity: updateCapacity,
             description: updateDescription,
@@ -437,8 +449,6 @@ function DashboardComponent() {
             closeWindow: updateDeadline,
             faculty: undefined,
         }
-
-        console.log(updateProfessor);
 
         if(updateProfessor)
             body.faculty = updateProfessor;
@@ -449,37 +459,79 @@ function DashboardComponent() {
     }
 
     function descriptionChangeHandler(e){
+        let input = e.target.value;
+        let targetErrorModal;
         
-        console.log(e.target.value);
+        if(e.target.parentNode.parentNode.id==='updateModalBody')
+            targetErrorModal = 'update';
+        else 
+            targetErrorModal = 'create';
+
+        if(input.length<=5){
+            updateErrorMessage('Provide a more descriptive description',targetErrorModal);
+        } else {
+            updateErrorMessage('',targetErrorModal);
+            updateDescription = input;
+        }
+    }
+
+    function openChangeHandler(e){
+
+        let input = new Date(e.target.value).toLocaleString('en-US',{ timeZone: 'EST' });
+
+
+        if(input>updateDeadline)
+            updateErrorMessage('Opening date must before the deadline ends', 'create');
+        else{
+            updateOpen = new Date(input).getTime()+20000000;
+            updateErrorMessage('','create');
+        }
     }
 
     function dateChangeHandler(e){
-        let input = e.target.value;
+        let input = new Date(e.target.value).toLocaleString('en-US',{ timeZone: 'EST' });
+        let targetErrorModal;
 
-        if(new Date(input).getTime() < Date.now()){
-            updateErrorMessage('Deadline must be a future date','update');
+        if(e.target.parentNode.parentNode.id==='updateModalBody')
+            targetErrorModal = 'update';
+        else 
+            targetErrorModal = 'create';
+        
+        if(input<updateOpen){
+            updateErrorMessage('Deadline date must be after the open date',targetErrorModal);
             e.target.value = undefined;
+        }else{
+            updateDeadline = new Date(input).getTime()+27000000;
+            updateErrorMessage('',targetErrorModal);
         }
-        else{
-            updateErrorMessage('','update');
-            updateDeadline = new Date(input).getTime().toString();
-        }
+    
     }
 
     function capactiyChangeHandler(e){
         let input = e.target.value;
+        let targetErrorModal;
+
+        if(e.target.parentNode.parentNode.id==='updateModalBody')
+            targetErrorModal = 'update';
+        else 
+            targetErrorModal = 'create';
+
+        console.log(input);
+        if(isNaN(input))//Check for string
+            updateErrorMessage('Capacity must be a number', targetErrorModal);
 
         if(input<=0 || input > 200){
-            updateErrorMessage('Capacity must be greater than 0 and less than 200', 'update');
+            updateErrorMessage('Capacity must be greater than 0 and less than 200', targetErrorModal);
             e.target.value = updateCapacity;
         } else {
-            updateErrorMessage('','update');
-            console.log('change capacityInput '+input);
+            updateErrorMessage('',targetErrorModal);
             updateCapacity = input;
         }
+        
     }
 
     function profChangeHandler(e){
+
 
         if(profMap.get(modal_id).includes(e.target.value)){
             if(numOfProfMap.get(modal_id)<2){                                   //Dont allow user to remove the only professor
@@ -495,20 +547,9 @@ function DashboardComponent() {
             updateErrorMessage('','update');
             updateProfessor = e.target.value;
         }
+        
 
     }
-
-    function capacityCreateHandler(e){
-
-        console.log("--Cap change Handler--");
-        console.log(e.target.parentNode);
-        console.log(e.target.parentNode.parentNode);
-
-    }
-
-    function openCreateHandler(e){}
-    function deadlineCreateHandler(e){}
-    function descriptionCreateHandler(e){}
 
     function nameCreateHandler(e){
 
