@@ -178,7 +178,7 @@ function DiscoverComponent() {
         let confirm = document.getElementById('exampleModalConfirm');
         
         
-        modal_id = elements[0].innerText;
+        modal_id = row.key;
         confirm.addEventListener('click', enroll);
     }
 
@@ -196,6 +196,7 @@ function DiscoverComponent() {
                     'Authorization': state.JWT
                 }
             })
+            let data = response.json();
             if(response.status != 201)
                 updateErrorMessage(data.message);
             else{
