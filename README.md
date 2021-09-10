@@ -7,10 +7,7 @@ SignMeUp is a course registration application that allows for users to easily vi
 React, Javascript, React Bootstrap, HTTP, CSS, React Router DOM
 
 <h2>Features</h2>
-Provides endpoints that expose CRUD operations on Users and Classes. Users can create an account as either a Student or Faculty member. Faculty members can create Classes which students can register/unregister for.
-
-<h2>TODOs</h2>
-Create a system that allows users to request Faculty status and be accepted by an Admin user. Allowing users to just sign up as Faculty directly is not secure.
+Single page user interface which allows users to interact with our API. Pages allow users to register, login, view registered/created courses, modify registered/created courses, and explore/enroll in new courses created by other users.
 
 <h2>UI Repository</h2>
 https://github.com/RaneyJ/SignMeUp-UI.git
